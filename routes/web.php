@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\DashboardController;
 use Illuminate\Support\Facades\Route;
 
 // Route::view('/', 'welcome');
@@ -7,7 +8,8 @@ use Illuminate\Support\Facades\Route;
 // Entrar directamente al dashboard si el usuario ya está autenticado.
 Route::redirect('/', '/dashboard');
 
-Route::view('dashboard', 'dashboard')
+// Ejecuta la vista con el controlador DashboardController.
+Route::get('dashboard', [DashboardController::class, 'index'])
     ->middleware(['auth', 'verified'])
     ->name('dashboard');
 
