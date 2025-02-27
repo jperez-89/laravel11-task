@@ -12,6 +12,7 @@ class TaskComponent extends Component
     public $title;
     public $description;
     public $modal = false;
+    public $isEdit = false;
 
     public function render()
     {
@@ -22,8 +23,10 @@ class TaskComponent extends Component
 
     public function clearFields()
     {
+        $this->id = '';
         $this->title = '';
         $this->description = '';
+        $this->isEdit = false;
     }
 
     public function closeModal()
@@ -51,12 +54,14 @@ class TaskComponent extends Component
         $this->closeModal();
     }
 
-    public function openModal(Task $task = null)
+    public function openModal($id = null)
     {
-        if ($task) {
+        if ($id != null) {
+            $task = Task::find($id);
             $this->id = $task->id;
             $this->title = $task->title;
             $this->description = $task->description;
+            $this->isEdit = true;
         } else {
             $this->clearFields();
         }
