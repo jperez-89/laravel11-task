@@ -8,6 +8,7 @@ use Livewire\Component;
 
 class TaskComponent extends Component
 {
+    public $id;
     public $title;
     public $description;
     public $modal = false;
@@ -25,32 +26,41 @@ class TaskComponent extends Component
         $this->description = '';
     }
 
-    public function openModal()
-    {
-        $this->clearFields();
-        $this->modal = true;
-    }
-
     public function closeModal()
     {
         $this->clearFields();
         $this->modal = false;
     }
 
-    public function createTask()
+    public function createUpdateTask()
     {
         $this->validate([
             'title' => 'required',
             'description' => 'required',
         ]);
 
-        $task = new Task();
-        $task->title = $this->title;
-        $task->description = $this->description;
-        $task->user_id = Auth::id();
-        $task->created_at = now();
-        $task->save();
+        Task::updateOrCreate([
+            'id' => $this->id,
+        ], [
+            'title' => $this->title,
+            'description' => $this->description,
+            'user_id' => Auth::user()->id,
+            'created_at' => now()
+        ]);
 
         $this->closeModal();
+    }
+
+    public function openModal(Task $task = null)
+    {
+        if ($task) {
+            $this->id = $task->id;
+            $this->title = $task->title;
+            $this->description = $task->description;
+        } else {
+            $this->clearFields();
+        }
+
+        $this->modal = true;
     }
 }
