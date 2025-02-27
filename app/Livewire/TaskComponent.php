@@ -63,4 +63,9 @@ class TaskComponent extends Component
 
         $this->modal = true;
     }
+
+    public function deleteTask($id)
+    {
+        Task::destroy($id);
+    }
 }
