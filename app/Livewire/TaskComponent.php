@@ -6,7 +6,6 @@ use App\Models\Task;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
-use PhpParser\Node\Stmt\Return_;
 
 class TaskComponent extends Component
 {
@@ -150,5 +149,19 @@ class TaskComponent extends Component
         Task::destroy($id);
         $this->deleteModal = false;
         // session()->flash('message', 'Tarea eliminada correctamente');
+    }
+
+    public function deleteAllTasks()
+    {
+        $user = User::find(Auth::user()->id);
+        $user->tasks()->delete();
+        // session()->flash('message', 'Tareas eliminadas correctamente');
+    }
+
+    public function recoverAllTasks()
+    {
+        $user = User::find(Auth::user()->id);
+        $user->tasks()->restore();
+        // session()->flash('message', 'Tareas recuperadas correctamente');
     }
 }

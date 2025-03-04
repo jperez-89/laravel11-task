@@ -12,15 +12,31 @@
         <div class="pt-2 relative overflow-x-auto shadow-md sm:rounded-lg">
             <div class="px-4 py-5 text-gray-700 border-b border-gray-200 gap-x-16 dark:border-gray-700">
                 <div class="flex justify-between">
-                    <button wire:click="openModal" data-modal-target="crud-modal" data-modal-toggle="crud-modal"
-                        class="text-white text-sm block bg-green-600 hover:bg-green-800 focus:ring-4 focus:outline-none focus:ring-green-300 font-medium rounded-lg px-5 py-2.5 text-center dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"
-                        type="button">
-                        Nuevo
-                    </button>
+                    <div class="flex space-x-2">
+                        <button wire:click="openModal" data-modal-target="crud-modal" data-modal-toggle="crud-modal"
+                            class="text-white text-sm block bg-green-600 hover:bg-green-800 focus:ring-4 focus:outline-none focus:ring-green-300 font-medium rounded-lg px-5 py-2.5 text-center dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"
+                            type="button">
+                            Nuevo
+                        </button>
 
-                    <input wire:model.debounce.300ms="search" type="text"
-                        class="w-80 px-3 py-2 text-sm text-gray-700 placeholder-gray-400 border border-gray-300 rounded-lg focus:ring-primary-600 focus:border-primary-600 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                        placeholder="Buscar...">
+                        <button wire:click="deleteAllTasks"
+                            wire.comfirm="¿Estás seguro de que quieres eliminar todas las tareas?"
+                            class="text-white text-sm block bg-red-600 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg px-5 py-2.5 text-center dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800"
+                            type="button">
+                            Borrar todas las Tareas
+                        </button>
+
+                        <button wire:click="recoverAllTasks"
+                            wire.comfirm="¿Estás seguro de que quieres recuperar todas las tareas?"
+                            class="text-white text-sm block bg-yellow-600 hover:bg-yellow-800 focus:ring-4 focus:outline-none focus:ring-yellow-300 font-medium rounded-lg px-5 py-2.5 text-center dark:bg-yellow-600 dark:hover:bg-yellow-700 dark:focus:ring-yellow-800"
+                            type="button">
+                            Recuperar Tareas
+                        </button>
+                    </div>
+
+                    <input wire:model.debounce.100ms="search" type="text"
+                        class="w-64 px-3 py-2 text-sm text-gray-700 placeholder-gray-400 border border-gray-300 rounded-lg focus:ring-primary-600 focus:border-primary-600 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                        placeholder="Buscar por título...">
                 </div>
 
                 <table class="my-2 w-full text-sm text-left rtl text-gray-500 dark:text-gray-400" wire:poll="loadTasks">
@@ -56,7 +72,12 @@
                                     {{ $task->description }}
                                 </td>
                                 <td class="px-6 py-4">
-
+                                    @if (isset($task->pivot))
+                                        <div class="flex flex-row space-x-1">
+                                            <x-custom-button x-data=""
+                                                wire:click="taskUnShared({{ $task }})">{{ __('Descompartir') }}</x-custom-button>
+                                        </div>
+                                    @endif
                                     @if ((isset($task->pivot) && $task->pivot->permission == 'edit') || Auth::user()->id == $task->user_id)
                                         <div class="flex flex-row space-x-1">
                                             <x-primary-button x-data=""
@@ -64,13 +85,6 @@
 
                                             <x-secondary-button x-data=""
                                                 wire:click="openShareModal({{ $task }})">{{ __('Compartir') }}</x-secondary-button>
-
-                                            @if (isset($task->pivot))
-                                                <div class="flex flex-row space-x-1">
-                                                    <x-custom-button x-data=""
-                                                        wire:click="taskUnShared({{ $task }})">{{ __('Descompartir') }}</x-custom-button>
-                                                </div>
-                                            @endif
 
                                             {{-- @if (isset($task->pivot) && ($task->pivot->permission == 'edit' || $task->pivot->permission == 'view'))
                                                 <x-secondary-button x-data=""
